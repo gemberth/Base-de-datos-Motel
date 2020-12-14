@@ -1,0 +1,410 @@
+/*==============================================================*/
+/* Table: CLIENTE                                               */
+/*==============================================================*/
+create table CLIENTE (
+   CLI_ID               INT                 not null,
+   CLI_NOMBRE           varCHAR(30)             null,
+   CLI_APELLIDO         varCHAR(30)             null,
+   CLI_SEXO             varCHAR(20)             not null,
+   CLI_CEDULA           int              null,
+   CLI_EDAD             INT                 not null,
+   CLI_FECHA_NACIMIENTO DATE                 null,
+   constraint PK_CLIENTE primary key (CLI_ID)
+);
+
+/*==============================================================*/
+/* Table: DETALLE_FACTURA                                       */
+/*==============================================================*/
+create table DETALLE_FACTURA (
+   ID_DETALLEFACTURA    INT                 not null,
+   FACTURA_ID           INT                 null,
+   HD_ID                INT                 null,
+   SP_ID                INT                 null,
+   DF_CANTIDAD          INT                 null,
+  
+   constraint PK_DETALLE_FACTURA primary key (ID_DETALLEFACTURA)
+);
+
+/*==============================================================*/
+/* Table: EMPLEADO                                              */
+/*==============================================================*/
+create table EMPLEADO (
+   EM_ID                INT                 not null,
+   MOT_ID               INT                 null,
+   EA_ID                INT                 null,
+   EM_NOMBRE            varCHAR(30)             not null,
+   EM_APELLIDO          varCHAR(30)             not null,
+   EM_TELEFONO          int          not null,
+   EM_CEDULA            int          not null,
+   constraint PK_EMPLEADO primary key (EM_ID)
+);
+
+/*==============================================================*/
+/* Table: FACTURA                                               */
+/*==============================================================*/
+create table FACTURA (
+   FACTURA_ID           INT                 not null,
+   MOT_ID               INT                 null,
+   EM_ID                INT                 null,
+   Fac_total            decimal               NOT NULL,
+   FACTURA_FECHA_EMICION date                 not null,
+   constraint PK_FACTURA primary key (FACTURA_ID)
+);
+
+/*==============================================================*/
+/* Table: HABITACION                                            */
+/*==============================================================*/
+create table HABITACION (
+   ID_HABITACION        INT                 not null,
+   MOT_ID               INT                 null,
+   ID_DESCRICCION_HABITACION varCHAR(30)             not null,   
+   ID_PRECIO_HABITACIO  decimal               not null,
+   constraint PK_HABITACION primary key (ID_HABITACION)
+);
+
+/*==============================================================*/
+/* Table: MOTEL                                                 */
+/*==============================================================*/
+create table MOTEL (
+   MOT_ID               INT                 not null,
+   MOTEL_NOMBRE         varCHAR(30)             not null,
+   MOTEL_DIRECCION      varCHAR(30)             not null,
+   MOTEL_TELEFONO       int          not null,
+   constraint PK_MOTEL primary key (MOT_ID)
+);
+
+/*==============================================================*/
+/* Table: RESERVA_HABITACION                                    */
+/*==============================================================*/
+create table RESERVA_HABITACION (
+   HD_ID                INT                 not null,
+   CLI_ID               INT                 null,
+   ID_HABITACION        INT                 null,
+   EM_ID                INT                 null,
+   HD_N_HABITACION      INT                    not null,
+   HD_CALIFICACCION_EM     INT                 not null,
+   HD_FECHA_INGRESO     timestamp                 not null,
+   HD_FECHA_SALIDA      timestamp                 not null,
+   HD_TIEMPO            DECIMAL                   NULL,
+   constraint PK_RESERVA_HABITACION primary key (HD_ID)
+);
+
+/*==============================================================*/
+/* Table: SERVICIO                                              */
+/*==============================================================*/
+create table SERVICIO (
+   SP_ID                INT                 not null,
+   SP_DESCRIPCION_SERVICIO varCHAR(30)             not null,
+   SP_PRECIO            decimal               not null,
+   SP_DESCRICCION_FORMA_COBRO varCHAR(50)             null,
+   constraint PK_SERVICIO primary key (SP_ID)
+);
+
+/*==============================================================*/
+/* Table: TIPO_EMPLEADO                                         */
+/*==============================================================*/
+create table TIPO_EMPLEADO (
+   EA_ID                INT                 not null,
+   DECRIPCION           varCHAR(30)             not null,
+   constraint PK_TIPO_EMPLEADO primary key (EA_ID)
+);
+
+alter table DETALLE_FACTURA
+   add constraint FK_DETALLE__DETALLE_R_RESERVA_ foreign key (HD_ID)
+      references RESERVA_HABITACION (HD_ID)
+      on delete restrict on update restrict;
+
+alter table DETALLE_FACTURA
+   add constraint FK_DETALLE__FACTURADE_SERVICIO foreign key (SP_ID)
+      references SERVICIO (SP_ID)
+      on delete restrict on update restrict;
+
+alter table DETALLE_FACTURA
+   add constraint FK_DETALLE__FACTURA_F_FACTURA foreign key (FACTURA_ID)
+      references FACTURA (FACTURA_ID)
+      on delete restrict on update restrict;
+
+alter table EMPLEADO
+   add constraint FK_EMPLEADO_MOTEL_EMP_MOTEL foreign key (MOT_ID)
+      references MOTEL (MOT_ID)
+      on delete restrict on update restrict;
+
+alter table EMPLEADO
+   add constraint FK_EMPLEADO_TIPOEMPLE_TIPO_EMP foreign key (EA_ID)
+      references TIPO_EMPLEADO (EA_ID)
+      on delete restrict on update restrict;
+
+alter table FACTURA
+   add constraint FK_FACTURA_MOTEL_FAC_MOTEL foreign key (MOT_ID)
+      references MOTEL (MOT_ID)
+      on delete restrict on update restrict;
+
+alter table FACTURA
+   add constraint FK_FACTURA_TIPO_EMPL_EMPLEADO foreign key (EM_ID)
+      references EMPLEADO (EM_ID)
+      on delete restrict on update restrict;
+
+alter table HABITACION
+   add constraint FK_HABITACI_MOTEL_HAB_MOTEL foreign key (MOT_ID)
+      references MOTEL (MOT_ID)
+      on delete restrict on update restrict;
+
+alter table RESERVA_HABITACION
+   add constraint FK_RESERVA__EMPLEADO__EMPLEADO foreign key (EM_ID)
+      references EMPLEADO (EM_ID)
+      on delete restrict on update restrict;
+
+alter table RESERVA_HABITACION
+   add constraint FK_RESERVA__RESERVA_C_CLIENTE foreign key (CLI_ID)
+      references CLIENTE (CLI_ID)
+      on delete restrict on update restrict;
+
+alter table RESERVA_HABITACION
+   add constraint FK_RESERVA__RESERVA_H_HABITACI foreign key (ID_HABITACION)
+      references HABITACION (ID_HABITACION)
+      on delete restrict on update restrict;
+	  
+
+
+
+/* Table: MOTEL        Insercion de datos                       */
+
+INSERT INTO MOTEL VALUES(1,'Nihg sleep','calle 14 av 24',0963019072);
+
+
+/* Table: TIPO_EMPLEADO Insercion de datos                      */
+
+INSERT INTO TIPO_EMPLEADO VALUES(1,'Administrativo');
+INSERT INTO TIPO_EMPLEADO VALUES(2,'Mantenimiento');
+--insert into  values ('1/12/2008 13:00:00.59')
+
+
+
+/* Table: EMPLEADO      Insercion de datos                      */
+
+
+
+INSERT INTO EMPLEADO VALUES(1,1,1,'Eva','Peron',0963019023,1310985436);
+INSERT INTO EMPLEADO VALUES(2,1,1,'Diego','Armando',0964568023,1301985436);
+INSERT INTO EMPLEADO VALUES(3,1,2,'Juan','Lopez',0978954223,1314985436);
+INSERT INTO EMPLEADO VALUES(4,1,2,'Cristina','Delgado',0994840227,1314985436);
+/*id-motel--tipo_id--Telefono--cedula*/	  
+
+
+/* Table: HABITACION     Insercion de datos                     */
+
+INSERT INTO HABITACION VALUES(1,1,'Habitacion normal',8.90);
+INSERT INTO HABITACION VALUES(2,1,'Habitacion VIP',10.90);
+/*id-motel--descripcion--precio*/
+
+
+
+
+
+
+/* Table: SERVICIO          Insercion de datos                  */
+
+INSERT INTO SERVICIO VALUES(1,'Jacuzzi',2.50,'Se pagara por hora');
+INSERT INTO SERVICIO VALUES(2,'Masajes ',2.00,'30 minutos de masaje');
+
+----------------------------------------------------------------------------------------------------
+/* Table: FACTURA            Insercion de datos                 */
+
+
+
+-- Lunes 7/12/2020
+INSERT INTO FACTURA VALUES(1,1,1,17.40,'7/12/2020 ');
+INSERT INTO FACTURA VALUES(2,1,1,13.40,'7/12/2020 ');--
+INSERT INTO FACTURA VALUES(3,1,2,11.40,'7/12/2020 ');--
+INSERT INTO FACTURA VALUES(4,1,2,12.90,'7/12/2020 ');--
+-- mARTES 8/12/2020
+INSERT INTO FACTURA VALUES(5,1,1,12.40,'8/12/2020 ');
+INSERT INTO FACTURA VALUES(6,1,2,14.40,'8/12/2020 ');
+--- Miercoles 9/12/2020
+INSERT INTO FACTURA VALUES(7,1,2,10.90,'9/12/2020 ');
+INSERT INTO FACTURA VALUES(8,1,2,10.90,'9/12/2020 ');
+INSERT INTO FACTURA VALUES(9,1,1,10.90,'9/12/2020 ');
+--Jueves  10/12/2020
+INSERT INTO FACTURA VALUES(10,1,1,12.90,'10/12/2020 ');
+INSERT INTO FACTURA VALUES(11,1,1,12.90,'10/12/2020 ');
+--Viernes 11/12/2020
+INSERT INTO FACTURA VALUES(12,1,1,10.90,'11/12/2020 ');
+INSERT INTO FACTURA VALUES(13,1,1,10.90,'11/12/2020 ');
+INSERT INTO FACTURA VALUES(14,1,1,12.90,'11/12/2020 ');
+INSERT INTO FACTURA VALUES(15,1,2,8.90,'11/12/2020 ');
+INSERT INTO FACTURA VALUES(16,1,2,8.90,'11/12/2020 ');
+INSERT INTO FACTURA VALUES(17,1,2,8.90,'11/12/2020 ');
+--Sabado 12/12/2020
+INSERT INTO FACTURA VALUES(18,1,2,8.90,'12/12/2020 ');
+INSERT INTO FACTURA VALUES(19,1,2,8.90,'12/12/2020 ');
+--Domingo 13/12/2020
+INSERT INTO FACTURA VALUES(20,1,1,10.90,'13/12/2020 ');
+INSERT INTO FACTURA VALUES(21,1,1,12.40,'13/12/2020 ');
+INSERT INTO FACTURA VALUES(22,1,1,10.90,'13/12/2020 ');
+
+
+--INSERT INTO FACTURA VALUES(4,1,2,17.40,'7/12/2020 13:30:01.59');
+
+
+
+
+
+
+
+
+/*id--motel--emplead_id--TOTAL--fecha*/
+
+
+
+/* Table: CLIENTE         Insercion de datos                    */
+
+
+-- Lunes 7/12/2020
+INSERT INTO CLIENTE VALUES(1,'Eduardo','Anchundia','Hombre',1305894563,20,'1/12/2000');
+INSERT INTO CLIENTE VALUES(2,'Angela','Delgado','Mujer',1315894789,30,null);--
+INSERT INTO CLIENTE VALUES(3,null,null,'Mujer',null,34,null);--
+INSERT INTO CLIENTE VALUES(4,null,null,'Hombre',null,35,null);--
+-- MARTES 8/12/2020
+INSERT INTO CLIENTE VALUES(5,'Santiago','Alcivar','Hombre',1314897563,22,null);--
+INSERT INTO CLIENTE VALUES(6,'Stalyn','Quijije','Hombre',1413569874,19,null);--
+--- Miercoles 9/12/2020
+INSERT INTO CLIENTE VALUES(7,'Luis','Morales','Hombre',1314456209,20,'27/9/2000');--
+INSERT INTO CLIENTE VALUES(8,'Maicol','Anton','Hombre',1319632459,20,'3/3/2000');--
+INSERT INTO CLIENTE VALUES(9,'Jostin','Barcia','Hombre',1319632487,27,null);--
+--- Jueves 10/12/2020
+INSERT INTO CLIENTE VALUES(10,'Carlos','Alfredo','Hombre',1314456209,58,null);--
+INSERT INTO CLIENTE VALUES(11,'Bryan','Arteaga','Hombre',1319632459,37,null);--
+--Viernes 11/12/2020
+INSERT INTO CLIENTE VALUES(12,null,null,'Hombre',null,20,null);--
+INSERT INTO CLIENTE VALUES(13,null,null,'Hombre',null,24,null);--
+INSERT INTO CLIENTE VALUES(14,'Luis','Alfredo','Hombre',1314456209,18,'27/9/2001');--
+INSERT INTO CLIENTE VALUES(15,null,null,'Hombre',null,18,null);--
+INSERT INTO CLIENTE VALUES(16,'Josue','Lucas','Hombre',1315456203,19,null);--
+INSERT INTO CLIENTE VALUES(17,'Eddy','Espinal','Hombre',1317632402,53,null);--
+---Sabado
+INSERT INTO CLIENTE VALUES(18,'Juan','Parrales','Hombre',1317632402,43,null);--
+INSERT INTO CLIENTE VALUES(19,'Veronica','Quiñones','Mujer',1317632402,28,null);--
+
+----Domingo 
+INSERT INTO CLIENTE VALUES(20,'Cristian','Anchundia','Hombre',1317895643,26,null);--
+INSERT INTO CLIENTE VALUES(21,'Rober','Delgado','Hombre',0598704567,38,null);--
+INSERT INTO CLIENTE VALUES(22,'Mike','Machuca','Hombre',0847834750,55,null);--
+
+/* Table: RESERVA_HABITACION           Insercion de datos       */
+
+-- Lunes 7/12/2020
+INSERT INTO RESERVA_HABITACION VALUES(1,1,2,1,002,7,'7/12/2020 11:10:00.59','7/12/2020 13:30:01.59',3.3);
+INSERT INTO RESERVA_HABITACION VALUES(2,2,2,1,003,8,'7/12/2020 14:00:00.59','7/12/2020 15:00:00.59',1);--
+INSERT INTO RESERVA_HABITACION VALUES(3,3,1,2,004,6,'7/12/2020 17:00:00.00','7/12/2020 19:00:00.00',2);--
+INSERT INTO RESERVA_HABITACION VALUES(4,4,2,2,005,7,'7/12/2020 9:00:00.00','7/12/2020 10:00:00.00',1);--
+--- Martes 8/10/2020
+INSERT INTO RESERVA_HABITACION VALUES(5,5,2,1,006,8,'8/12/2020 14:00:00.00','8/12/2020 16:00:00.00',2);--
+INSERT INTO RESERVA_HABITACION VALUES(6,6,2,2,007,8,'8/12/2020 9:30:00.00','8/12/2020 10:30:00.00',1.5);--
+
+--- Miercoles 9/10/2020
+INSERT INTO RESERVA_HABITACION VALUES(7,7,1,1,001,8,'9/12/2020 1:00:00.00','9/12/2020 11:00:00.00',10);--
+INSERT INTO RESERVA_HABITACION VALUES(8,8,1,2,002,8,'9/12/2020 1:00:00.00','9/12/2020 11:00:00.00',10);--
+INSERT INTO RESERVA_HABITACION VALUES(9,9,1,2,003,8,'9/12/2020 10:00:00.00','9/12/2020 12:00:00.00',2);--
+
+--- Jueves 10/12/2020
+INSERT INTO RESERVA_HABITACION VALUES(10,10,2,1,002,7,'10/12/2020 14:00:00.00','10/12/2020 17:00:00.00',3);--
+INSERT INTO RESERVA_HABITACION VALUES(11,11,2,2,003,7,'10/12/2020 13:00:00.00','10/12/2020 18:00:00.00',5);--
+--Viernes 11/12/2020
+INSERT INTO RESERVA_HABITACION VALUES(12,12,2,1,007,8,'11/12/2020 9:00:00.00','11/12/2020 12:00:00.00',3);--
+INSERT INTO RESERVA_HABITACION VALUES(13,13,2,1,008,8,'11/12/2020 13:00:00.00','11/12/2020 16:00:00.00',3);--
+INSERT INTO RESERVA_HABITACION VALUES(14,14,2,1,003,5,'11/12/2020 14:30:00.00','11/12/2020 16:00:00.00',1.5);--
+INSERT INTO RESERVA_HABITACION VALUES(15,15,1,2,004,4,'11/12/2020 17:00:00.00','11/12/2020 19:00:00.00',2);--
+INSERT INTO RESERVA_HABITACION VALUES(16,16,1,2,005,3,'11/12/2020 20:00:00.00','11/12/2020 22:00:00.00',2);--
+INSERT INTO RESERVA_HABITACION VALUES(17,17,1,2,006,9,'11/12/2020 18:00:00.00','11/12/2020 23:00:00.00',5);--
+--Sabado 12/12/2020
+INSERT INTO RESERVA_HABITACION VALUES(18,18,1,2,001,9,'12/12/2020 15:00:00.00','12/12/2020 22:00:00.00',7);--
+INSERT INTO RESERVA_HABITACION VALUES(19,19,1,2,002,10,'12/12/2020 13:00:00.00','12/12/2020 21:00:00.00',8);--
+--Domingo 13/12/2020
+INSERT INTO RESERVA_HABITACION VALUES(20,20,2,1,001,8,'13/12/2020 14:00:00.00','13/12/2020 19:00:00.00',5);--
+INSERT INTO RESERVA_HABITACION VALUES(21,21,2,1,006,8,'13/12/2020 17:00:00.00','13/12/2020 23:00:00.00',6);--
+INSERT INTO RESERVA_HABITACION VALUES(22,22,2,1,007,7,'13/12/2020 16:00:00.00','13/12/2020 23:00:00.00',7);--
+
+--INSERT INTO RESERVA_HABITACION VALUES(2,1,1,1,003,7,'7/12/2020 11:10:00.59','7/12/2020 13:30:01.59');
+
+/*id--clienteID--habitacionID--EMPLEADOid--NumeroHabitacion--calificacion--fechaIngreso--fechaSalida---TIEMPO*/
+
+/* Table: DETALLE_FACTURA       Insercion de datos              */
+
+
+-- Lunes 7/12/2020   --4--
+--------cliente 1
+INSERT INTO DETALLE_FACTURA VALUES(1,1,1,2,2);
+INSERT INTO DETALLE_FACTURA VALUES(2,1,1,1,1);
+-------------------------------------------------
+
+-------cliente 2
+INSERT INTO DETALLE_FACTURA VALUES(3,2,2,1,1);              
+-------------------------------------------------
+-------cliente 3
+INSERT INTO DETALLE_FACTURA VALUES(4,3,3,1,1);  
+-------------------------------------------------
+-------cliente 4
+INSERT INTO DETALLE_FACTURA VALUES(5,4,4,2,1); 
+
+-- Martes 8/12/2020  --2--
+-------------------------------------------------
+-------cliente 5
+INSERT INTO DETALLE_FACTURA VALUES(6,5,5,2,2);
+-------------------------------------------------
+-------cliente 6
+INSERT INTO DETALLE_FACTURA VALUES(7,6,6,2,1);
+-------------------------------------------------
+--Miercoles 9/12/2020 --3--                              
+-------cliente 7
+INSERT INTO DETALLE_FACTURA VALUES(8,7,7,1,1);--
+-------------------------------------------------
+-------cliente 8
+INSERT INTO DETALLE_FACTURA VALUES(9,8,8,1,1);
+-------------------------------------------------
+-------cliente 9
+INSERT INTO DETALLE_FACTURA VALUES(10,9,9,1,1);
+-------------------------------------------------
+--Jueves 10/12/2020 --2--
+-------cliente 10
+INSERT INTO DETALLE_FACTURA VALUES(11,10,10,2,1);
+-------------------------------------------------
+-------cliente 11
+INSERT INTO DETALLE_FACTURA VALUES(12,11,11,2,1);
+-------------------------------------------------
+--Viernes 11/12/2020    --6--
+-------cliente 12
+    INSERT INTO DETALLE_FACTURA VALUES(13,12,12,null,null);         
+-------------------------------------------------
+-------cliente 13
+INSERT INTO DETALLE_FACTURA VALUES(14,13,13,null,null);
+-------------------------------------------------
+-------cliente 14
+INSERT INTO DETALLE_FACTURA VALUES(15,14,14,2,1);
+-------------------------------------------------
+-------cliente 15
+INSERT INTO DETALLE_FACTURA VALUES(16,15,15,null,null);
+-------------------------------------------------
+-------cliente 16
+INSERT INTO DETALLE_FACTURA VALUES(17,16,16,null,null);
+-------------------------------------------------
+-------cliente 17
+INSERT INTO DETALLE_FACTURA VALUES(18,17,17,null,null);
+-------------------------------------------------
+--Sabado 12/12/2020  --2--
+-------cliente 18
+INSERT INTO DETALLE_FACTURA VALUES(19,18,18,null,null);
+-------------------------------------------------
+-------cliente 19
+INSERT INTO DETALLE_FACTURA VALUES(20,19,19,null,null);
+-------------------------------------------------
+--Domingo 13/12/2020
+-------cliente 20
+INSERT INTO DETALLE_FACTURA VALUES(21,20,20,null,null);
+-------------------------------------------------
+-------cliente 21
+INSERT INTO DETALLE_FACTURA VALUES(22,21,21,1,1);
+-------------------------------------------------
+-------cliente 22
+INSERT INTO DETALLE_FACTURA VALUES(23,22,22,null,null);
+-------------------------------------------------
+   /*id--facturaID--ResevaID--ServicioID--cantidad--*/
