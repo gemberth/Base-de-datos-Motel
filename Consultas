@@ -1,0 +1,93 @@
+ ---------------------------------consulta---1--------
+ SELECT  
+public.motel.MOTEL_NOMBRE,
+public.factura.FACTURA_FECHA_EMICION AS fecha,
+count (factura.FACTURA_ID) as Numero_Fcturas
+ FROM 
+factura
+inner join motel on factura.mot_id=motel.mot_id
+where current_date - factura.FACTURA_FECHA_EMICION <=7
+group by public.factura.FACTURA_FECHA_EMICION, public.motel.MOTEL_NOMBRE 
+order by public.factura.FACTURA_FECHA_EMICION asc
+
+-----------------------------------consulta--2
+select 
+cliente.cli_sexo as Sexo,
+ ROUND ( avg(cliente.cli_edad)) as Edad
+from
+public.reserva_habitacion
+  inner join public.habitacion ON reserva_habitacion.id_habitacion = habitacion.id_habitacion
+  inner join public.cliente ON cliente.cli_id = reserva_habitacion.cli_id 
+group by cliente.cli_sexo
+--SELECT * FROM CLIENTE
+-----------------------------------------consulta 3
+select 
+public.motel.MOTEL_NOMBRE,
+sum (factura.fac_total) as Total
+from factura
+inner join motel on factura.mot_id=motel.mot_id
+where current_date - factura.FACTURA_FECHA_EMICION <=7
+group by public.motel.MOTEL_NOMBRE
+------------------------------------Consulta 4
+select 
+count(   esporadicos.hd_tiempo   )  as Esporadicas___no_esporadicas
+from 
+public.habitacion
+inner join public.reserva_habitacion as esporadicos  ON esporadicos.id_habitacion = habitacion.id_habitacion 
+WHERE esporadicos.hd_tiempo <=3
+Union all
+select 
+count(   no_esporadicos.hd_tiempo   )  as no_esporadicoss 
+from 
+habitacion
+inner join public.reserva_habitacion as no_esporadicos  ON no_esporadicos.id_habitacion = habitacion.id_habitacion
+WHERE no_esporadicos.hd_tiempo >3
+
+----------------------------5
+SELECT 
+  empleado.em_nombre as nombre_empleado , 
+  reserva_habitacion.hd_calificaccion_em as Calificacion, 
+  reserva_habitacion.hd_n_habitacion as Numero_habitacion, 
+  cliente.cli_nombre as Cliente, 
+  reserva_habitacion.HD_TIEMPO AS ESTANCIA_MOTEL, 
+  cliente.cli_edad as Edad
+FROM 
+  public.empleado  
+   inner join  public.reserva_habitacion on empleado.em_id = reserva_habitacion.em_id
+   inner join public.cliente on  reserva_habitacion.cli_id = cliente.cli_id
+   inner join public.habitacion on  reserva_habitacion.id_habitacion = habitacion.id_habitacion
+   inner join public.tipo_empleado on tipo_empleado.ea_id = empleado.ea_id
+WHERE   reserva_habitacion.hd_calificaccion_em <7  
+order by  reserva_habitacion.hd_calificaccion_em
+    
+---CONSULTA 6-----------------------------------------
+ 
+SELECT 
+  motel.motel_nombre as motel, 
+  motel.motel_direccion as direcccion, 
+  motel.motel_telefono as telefono, 
+  reserva_habitacion.hd_n_habitacion as habitacion, 
+  factura.factura_fecha_emicion as fecha_factura, 
+  cliente.cli_cedula as cedula, 
+  cliente.cli_nombre as nombre, 
+  cliente.cli_apellido as apellido, 
+  habitacion.id_descriccion_habitacion as tipo_habitacion , 
+  habitacion.id_precio_habitacio as precio_habitacion, 
+  servicio.sp_descripcion_servicio as servicio , 
+  servicio.sp_precio as precio_servicio, 
+  reserva_habitacion.hd_fecha_ingreso as fecha_ingreso, 
+  reserva_habitacion.hd_fecha_salida as fecha_salida, 
+  detalle_factura.df_cantidad as cantidad ,
+  detalle_factura.ID_DETALLEFACTURA as id_factura
+FROM 
+  public.reserva_habitacion
+  inner join   cliente on reserva_habitacion.cli_id = cliente.cli_id  
+  inner join  public.habitacion on reserva_habitacion.id_habitacion = habitacion.id_habitacion
+  inner join  public.empleado on empleado.em_id = reserva_habitacion.em_id
+ -- inner join    public.cliente on   habitacion.id_habitacion = reserva_habitacion.id_habitacion
+  inner join  public.motel on  habitacion.mot_id = motel.mot_id
+  inner join detalle_factura on reserva_habitacion.hd_id= detalle_factura.hd_id  
+  inner join factura on factura.factura_id = detalle_factura.factura_id 
+  full join  public.servicio on  servicio.sp_id = detalle_factura.sp_id 
+   
+ WHERE factura.FACTURA_ID='1'
