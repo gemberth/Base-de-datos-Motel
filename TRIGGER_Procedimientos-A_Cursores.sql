@@ -1,4 +1,4 @@
-Trigger que no permita crear una reservacion para un cliente si tiene mas de 3 reservaciones pasadas con una calificacion menor o igual que 4.
+/*Trigger que no permita crear una reservacion para un cliente si tiene mas de 3 reservaciones pasadas con una calificacion menor o igual que 4.*/
 
 /*TRIGGER*/
 
@@ -28,7 +28,7 @@ execute procedure tg_reserva();
 
 --------------------------------------------------------------------------------------
 
-Cursor que muestre las ganancias totales generadas por cada una de la habitaciones y el tipo de habitacion.
+/*Cursor que muestre las ganancias totales generadas por cada una de la habitaciones y el tipo de habitacion.*/
 /*CURSOR*/
 do $$
 declare
@@ -46,8 +46,8 @@ end $$
 language 'plpgsql';
 
 
-Un procedimiento almacenado que reciba como parametro la cedula de un empleado y que devuelva las ganacias generadas por la suma totala de todas sus facturas por tipo de habitacion.
-
+/*Un procedimiento almacenado que reciba como parametro la cedula de un empleado y que devuelva las ganacias generadas por la suma totala de todas sus facturas por tipo de habitacion.
+*/
 /*PROCEDIMIENTO ALMACENADO*/
 create or replace function obtener_ventas_totales( cedula_empleado integer)
 RETURNS TABLE (empleado_nombre varchar,
